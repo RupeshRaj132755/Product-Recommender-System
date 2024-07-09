@@ -2,16 +2,25 @@ import streamlit as st
 import pickle
 import pandas as pd
 
-def Top_recommendation(product):
+def Top_recommendation(product,confidence):
   # Convert 'antecedents' to strings for easier comparison
    rules['antecedents'] = rules['antecedents'].apply(lambda x: ', '.join(list(x)))
    rules['consequents'] = rules['consequents'].apply(lambda x: ', '.join(list(x)))
 
 
      # Filter the rules using the 'antecedents_str' column
-   recommendation = rules[(rules['antecedents_str']== product) & (rules['confidence'] > 0.10)].sort_values(by=['confidence','lift'], ascending=False)[1:10]
+   recommendation = rules[(rules['antecedents_str']== product) & (rules['confidence'] > confidence)].sort_values(by=['confidence','lift'], ascending=False)[1:10]
    return recommendation
 
+def least_recommendation(product,confidence):
+  # Convert 'antecedents' to strings for easier comparison
+   rules['antecedents'] = rules['antecedents'].apply(lambda x: ', '.join(list(x)))
+   rules['consequents'] = rules['consequents'].apply(lambda x: ', '.join(list(x)))
+
+
+     # Filter the rules using the 'antecedents_str' column
+   recommendation = rules[(rules['antecedents_str']== product) & (rules['confidence'] > confidence)].sort_values(by=['confidence','lift'], ascending=False)[-10:]
+   return recommendation
 
 product_dict = pickle.load(open('antecedents_products_dict.pkl','rb'))
 product = pd.DataFrame(product_dict)
@@ -25,6 +34,14 @@ select_antecedents = st.selectbox(
     'Enter the antecedents product',
     product['Product'].values)
 
-if st.button('Recommend'):
-    recomend= Top_recommendation(select_antecedents)
+st.title('Confidence%')
+slider_value = st.slider('Select a value', min_value=0.0, max_value=1.0, step=0.01)
+
+
+if st.button('Top_Recommend'):
+    recomend= Top_recommendation(select_antecedents,slider_value)
+    st.write(recomend)
+
+if st.button('Least_Recommend'):
+    recomend= least_recommendation(select_antecedents,slider_value)
     st.write(recomend)
