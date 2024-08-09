@@ -9,7 +9,7 @@ def Top_recommendation(product,confidence):
 
 
      # Filter the rules using the 'antecedents_str' column
-   recommendation = rules[(rules['antecedents_str']== product) & (rules['confidence'] > confidence)].sort_values(by=['confidence','lift'], ascending=False)[1:10]
+   recommendation = rules[(rules['antecedents_str']== product) & (rules['confidence'] > confidence)].sort_values(by=['confidence','lift'], ascending=False)
    return recommendation
 
 def least_recommendation(product,confidence):
